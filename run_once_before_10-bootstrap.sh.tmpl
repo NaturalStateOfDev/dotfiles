@@ -46,5 +46,13 @@ if ! command -v starship >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/starship" ]
   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes --bin-dir "$HOME/.local/bin"
 fi
 
+# atuin: synced shell history. Official installer needs a tty; fall back to
+# a direct release-binary install when running non-interactively.
+if ! command -v atuin >/dev/null 2>&1 && [ ! -x "$HOME/.atuin/bin/atuin" ]; then
+  info "installing atuin"
+  curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh ||
+    info "atuin install failed — install manually and run: atuin login && atuin sync"
+fi
+
 info "done — if zsh isn't your login shell yet: chsh -s \$(command -v zsh)"
 {{ end -}}

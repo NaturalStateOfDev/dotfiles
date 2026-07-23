@@ -74,23 +74,16 @@ ZSH_THEME=""  # starship handles the prompt; loading an OMZ theme just wastes st
 plugins=(
   command-not-found
   extract
-  deno
   git
   github
   gitignore
   history-substring-search
-  node
-  npm
-  nvm
-  yarn
-  volta
   vscode
   sudo
   web-search
-  z
   zsh-autosuggestions
-  zsh-syntax-highlighting
   ohmyzsh-full-autoupdate
+  zsh-syntax-highlighting  # must stay last — hooks the final ZLE state
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -141,6 +134,9 @@ if command -v eza >/dev/null 2>&1; then
 fi
 command -v batcat >/dev/null 2>&1 && alias bat='batcat'
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
+# Atuin: encrypted, synced shell history on Ctrl-R. Up-arrow stays with
+# history-substring-search, so only Ctrl-R changes behavior.
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh --disable-up-arrow)"
 if command -v fzf >/dev/null 2>&1; then
   [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
   [[ -f /usr/share/doc/fzf/examples/completion.zsh ]]   && source /usr/share/doc/fzf/examples/completion.zsh

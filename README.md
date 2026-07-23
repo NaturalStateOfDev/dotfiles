@@ -41,6 +41,7 @@ chezmoi merge <file>  # reconcile when both versions have good parts
 | `dot_gitconfig.tmpl` | `~/.gitconfig` | name/email from per-machine template data |
 | `dot_config/starship.toml` | `~/.config/starship.toml` | prompt config |
 | `dot_claude/` | `~/.claude/` | global CLAUDE.md + `/dotfiles` skill |
+| `dot_wezterm.lua`, `dot_config/wezterm/` | WezTerm config + background assets | Windows machines only (ignored elsewhere) |
 | `run_once_before_10-bootstrap.sh.tmpl` | — | new-Linux-machine setup, runs once |
 | `.chezmoi.toml.tmpl` | `~/.config/chezmoi/chezmoi.toml` | prompts once per machine |
 

@@ -8,4 +8,9 @@ CLAUDE.md
 .oh-my-zsh
 .oh-my-zsh/**
 .config/starship.toml
+{{ else -}}
+# WezTerm runs on the Windows host; Linux/WSL machines skip its config.
+.wezterm.lua
+.config/wezterm
+.config/wezterm/**
 {{ end -}}

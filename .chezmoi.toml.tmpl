@@ -1,0 +1,9 @@
+{{- $name := promptStringOnce . "name" "Git author name" -}}
+{{- $email := promptStringOnce . "email" "Git author email" -}}
+{{- $work := promptBoolOnce . "work" "Is this a work machine" -}}
+# Machine-local chezmoi config — regenerated from .chezmoi.toml.tmpl on `chezmoi init`.
+# Holds per-machine identity/data so none of it lives in the (public) repo.
+[data]
+    name = {{ $name | quote }}
+    email = {{ $email | quote }}
+    work = {{ $work }}

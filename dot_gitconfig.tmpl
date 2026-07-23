@@ -1,0 +1,15 @@
+[init]
+	defaultBranch = main
+[user]
+	name = {{ .name | quote }}
+	email = {{ .email | quote }}
+[pull]
+	rebase = true
+[fetch]
+	prune = true
+{{- if .work }}
+# Work machines: force SSH for all GitHub access (EMU org policy-friendly).
+# Personal machines skip this so the public dotfiles repo pulls anonymously.
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+{{- end }}

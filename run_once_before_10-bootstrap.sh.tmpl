@@ -1,0 +1,50 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+# One-time bootstrap for new Linux machines. Runs BEFORE the first
+# `chezmoi apply` so oh-my-zsh installs cleanly before configs land.
+# Idempotent and best-effort: anything unavailable warns instead of aborting.
+set -u
+
+info() { printf '\033[1;34m[bootstrap]\033[0m %s\n' "$*"; }
+
+# Core packages — only if sudo works without hanging a non-interactive run.
+if command -v apt-get >/dev/null 2>&1; then
+  SUDO=""
+  if sudo -n true 2>/dev/null; then SUDO="sudo -n"
+  elif [ -t 0 ]; then SUDO="sudo"
+  fi
+  if [ -n "$SUDO" ]; then
+    info "installing packages via apt (zsh git curl fzf zoxide eza)"
+    $SUDO apt-get update -qq || true
+    $SUDO apt-get install -y -qq zsh git curl fzf zoxide eza 2>/dev/null ||
+      info "some apt packages unavailable (eza needs Ubuntu 24.04+/Debian 13+) — install manually"
+  else
+    info "sudo unavailable — skipping apt packages"
+  fi
+fi
+
+# oh-my-zsh — KEEPZSHRC so it never clobbers the chezmoi-managed .zshrc.
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+  info "installing oh-my-zsh"
+  RUNZSH=no KEEPZSHRC=yes CHSH=no \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+
+# Custom omz plugins referenced by .zshrc.
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+clone_plugin() {
+  [ -d "$ZSH_CUSTOM/plugins/$1" ] || git clone --depth=1 "https://github.com/$2" "$ZSH_CUSTOM/plugins/$1"
+}
+clone_plugin zsh-autosuggestions      zsh-users/zsh-autosuggestions
+clone_plugin zsh-syntax-highlighting  zsh-users/zsh-syntax-highlighting
+clone_plugin ohmyzsh-full-autoupdate  Pilaton/OhMyZsh-full-autoupdate
+
+# starship prompt — user-local install, no sudo needed.
+if ! command -v starship >/dev/null 2>&1 && [ ! -x "$HOME/.local/bin/starship" ]; then
+  info "installing starship"
+  mkdir -p "$HOME/.local/bin"
+  sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes --bin-dir "$HOME/.local/bin"
+fi
+
+info "done — if zsh isn't your login shell yet: chsh -s \$(command -v zsh)"
+{{ end -}}

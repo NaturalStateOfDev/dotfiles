@@ -1,0 +1,33 @@
+# Starship prompt config. Docs: https://starship.rs/config/
+# Each [module] block configures one segment. The defaults are good — only
+# override what you want to change. Delete a block to revert to defaults.
+
+# Blank line above each prompt — breathing room when scrolling.
+add_newline = true
+
+# Default is 500ms; WSL /mnt/c or corp VPN can exceed that on cold reads.
+command_timeout = 1000
+
+[directory]
+truncation_length = 4          # show at most the last 4 path segments
+truncate_to_repo = true         # inside a git repo, show path relative to repo root
+style = "bold blue"
+
+[cmd_duration]
+min_time = 2000                 # only render when a command took >2s
+style = "yellow"
+
+[aws]
+# AWS profile + region — defends against running `terraform apply` on prod by accident.
+format = 'on [$symbol($profile )(\($region\) )]($style)'
+style = "bold yellow"
+
+[python]
+symbol = " "                  # Nerd Font Python glyph
+
+# Hide modules unlikely to appear in your work (each disabled module saves a few µs).
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true

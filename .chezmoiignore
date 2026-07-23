@@ -1,0 +1,11 @@
+# Repo documentation — never applied to $HOME.
+README.md
+CLAUDE.md
+
+{{ if eq .chezmoi.os "windows" -}}
+# zsh/oh-my-zsh/starship are Linux-side only.
+.zshrc
+.oh-my-zsh
+.oh-my-zsh/**
+.config/starship.toml
+{{ end -}}

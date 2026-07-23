@@ -8,8 +8,9 @@ CLAUDE.md
 .oh-my-zsh
 .oh-my-zsh/**
 .config/starship.toml
-{{ else -}}
-# WezTerm runs on the Windows host; Linux/WSL machines skip its config.
+{{ else if contains "microsoft" (lower .chezmoi.kernel.osrelease) -}}
+# WSL: WezTerm runs on the Windows host, which manages its own copy.
+# Native Linux machines (no "microsoft" in the kernel release) DO get WezTerm.
 .wezterm.lua
 .config/wezterm
 .config/wezterm/**

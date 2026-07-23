@@ -29,9 +29,14 @@ config.default_cursor_style = 'BlinkingBar'
 
 config.enable_kitty_keyboard = true
 
--- Aesthetics: slight transparency + Windows 11 Acrylic blur.
+-- One config for every platform: detect at runtime instead of forking files.
+local is_windows = wezterm.target_triple:find('windows') ~= nil
+
+-- Aesthetics: slight transparency; Acrylic blur where Windows supports it.
 config.window_background_opacity = 0.95
-config.win32_system_backdrop = 'Acrylic'
+if is_windows then
+  config.win32_system_backdrop = 'Acrylic'
+end
 config.window_padding = { left = 8, right = 8, top = 4, bottom = 4 }
 
 -- Layered space background + supernova animation lives in a separate module.
@@ -137,9 +142,15 @@ mouse_bindings = {
 -- Assign after the table is populated (previously assigned while empty).
 config.mouse_bindings = mouse_bindings
 
--- New tabs/windows launch into WSL Ubuntu's login shell (zsh + starship),
--- starting in your Linux $HOME with proper \\wsl$ cwd handling.
-config.default_domain = 'WSL:Ubuntu'
+-- Windows machines with WSL: launch new tabs/windows into the first WSL
+-- distro's login shell (zsh + starship) with proper \\wsl$ cwd handling.
+-- Pure Windows and native Linux machines keep wezterm's default local shell.
+if is_windows then
+  local wsl_domains = wezterm.default_wsl_domains()
+  if #wsl_domains > 0 then
+    config.default_domain = wsl_domains[1].name
+  end
+end
 
 -- Tab title: "<index>  <title>". Prefers an explicit tab title (set via Ctrl-Space ,)
 -- over the running pane's process title, so renamed tabs stick.

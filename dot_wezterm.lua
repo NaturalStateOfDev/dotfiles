@@ -9,6 +9,11 @@ local keys = {}
 local mouse_bindings = {}
 local launch_menu = {}
 
+-- One config for every platform: detect at runtime instead of forking files.
+-- wezterm.target_triple is the build triple of the running wezterm binary,
+-- e.g. 'x86_64-pc-windows-msvc' or 'x86_64-unknown-linux-gnu'.
+local is_windows = wezterm.target_triple:find('windows') ~= nil
+
 -- This is where you actually apply your config choices.
 
 -- For example, changing the initial geometry for new windows:
@@ -17,20 +22,28 @@ config.initial_rows = 28
 
 -- or, changing the font size and color scheme.
 config.font_size = 10
-config.font = wezterm.font_with_fallback {
-  'CaskaydiaCove Nerd Font Mono', -- patched Cascadia with Nerd Font icons
-  'Cascadia Mono',
-  'Consolas',
+-- Font fallback chain. WezTerm warns when the *first* entry is missing, so put
+-- the platform-preferred font at index 1 to avoid noise on startup.
+local fonts = {
+  'Cascadia Mono NF',  -- Microsoft's Cascadia w/ Nerd Font glyphs (Linux apt: fonts-cascadia-code; usually on Win11 too)
+  'Cascadia Code NF',  -- same icons, has programming ligatures
+  'Cascadia Mono PL',  -- Powerline-only fallback (no devicons)
+  'Cascadia Mono',     -- plain Cascadia, no icons
+  'Consolas',          -- Windows last-resort
+  'DejaVu Sans Mono',  -- Linux last-resort (always present)
 }
+if is_windows then
+  -- Prefer the Nerd Fonts community build on Windows: wider icon coverage
+  -- (Material, Devicons, Octicons) than Microsoft's NF variant.
+  table.insert(fonts, 1, 'CaskaydiaCove Nerd Font Mono')
+end
+config.font = wezterm.font_with_fallback(fonts)
 config.color_scheme = 'Monokai Pro Ristretto (Gogh)'
 
 -- makes my cursor blink
 config.default_cursor_style = 'BlinkingBar'
 
 config.enable_kitty_keyboard = true
-
--- One config for every platform: detect at runtime instead of forking files.
-local is_windows = wezterm.target_triple:find('windows') ~= nil
 
 -- Aesthetics: slight transparency; Acrylic blur where Windows supports it.
 config.window_background_opacity = 0.95

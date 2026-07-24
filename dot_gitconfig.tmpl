@@ -12,4 +12,14 @@
 # Personal machines skip this so the public dotfiles repo pulls anonymously.
 [url "git@github.com:"]
 	insteadOf = https://github.com/
+{{- else }}
+# Personal machines push over HTTPS; gh supplies credentials (gh auth login).
+# Plain `gh` (no absolute path) so it resolves wherever gh is installed.
+# Blank helper first resets any system-level helpers for these hosts.
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential
 {{- end }}

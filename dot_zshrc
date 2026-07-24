@@ -126,6 +126,11 @@ fi
 # Cortex CLI completion (disable via /settings in cortex)
 [[ -s ~/.zsh/completions/cortex.zsh ]] && source ~/.zsh/completions/cortex.zsh
 
+# mise: per-project tool versions (node, uv, chezmoi, …). Activate before the
+# tooling checks below so mise-managed binaries are found. Guarded — machines
+# without mise skip it.
+command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"
+
 # Modern CLI tooling — guarded so missing binaries don't break login
 if command -v eza >/dev/null 2>&1; then
   alias ls='eza --icons --git'
@@ -136,6 +141,9 @@ command -v batcat >/dev/null 2>&1 && alias bat='batcat'
 command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 # Atuin: encrypted, synced shell history on Ctrl-R. Up-arrow stays with
 # history-substring-search, so only Ctrl-R changes behavior.
+# Its installer drops the binary in ~/.atuin/bin and appends a PATH line to
+# .zshrc; this guarded source replaces that so the file stays chezmoi-clean.
+[[ -f "$HOME/.atuin/bin/env" ]] && . "$HOME/.atuin/bin/env"
 command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh --disable-up-arrow)"
 if command -v fzf >/dev/null 2>&1; then
   [[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh

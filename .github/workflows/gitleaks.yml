@@ -2,6 +2,7 @@ name: gitleaks
 on:
   push:
   pull_request:
+  workflow_dispatch:   # manual run = full-history scan (push runs only scan the pushed range)
 
 jobs:
   scan:

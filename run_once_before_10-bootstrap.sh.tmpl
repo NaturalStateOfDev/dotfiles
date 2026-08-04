@@ -27,6 +27,19 @@ if command -v apt-get >/dev/null 2>&1; then
   fi
 fi
 
+# NixOS system flake — the machine's declarative config lives in its own repo
+# (~/myNixOS), separate from these dotfiles: dotfiles are cross-platform $HOME
+# config, the flake defines one NixOS system, and flakes want to be a plain
+# git repo (flake.lock churn, edit-then-rebuild loop) rather than
+# chezmoi-managed. This clone is the bridge between the two on a fresh
+# machine; restore = chezmoi init + sudo nixos-rebuild switch --flake
+# ~/myNixOS#myMachine. Other distros skip it.
+if [ -e /etc/NIXOS ] && [ ! -d "$HOME/myNixOS" ]; then
+  info "cloning NixOS system flake"
+  git clone https://github.com/NaturalStateOfDev/myNixOS "$HOME/myNixOS" ||
+    info "myNixOS clone failed — clone it manually"
+fi
+
 # oh-my-zsh — KEEPZSHRC so it never clobbers the chezmoi-managed .zshrc.
 if [ ! -d "$HOME/.oh-my-zsh" ]; then
   info "installing oh-my-zsh"

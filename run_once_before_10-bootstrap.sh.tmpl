@@ -1,8 +1,12 @@
 {{ if eq .chezmoi.os "linux" -}}
-#!/bin/bash
+#!/usr/bin/env bash
 # One-time bootstrap for new Linux machines. Runs BEFORE the first
 # `chezmoi apply` so oh-my-zsh installs cleanly before configs land.
 # Idempotent and best-effort: anything unavailable warns instead of aborting.
+#
+# Shebang must stay `/usr/bin/env bash`, not `/bin/bash`: NixOS ships only
+# /bin/sh and /usr/bin/env, so a hardcoded /bin/bash fails the exec with a
+# confusing "no such file or directory" naming the script rather than bash.
 set -u
 
 info() { printf '\033[1;34m[bootstrap]\033[0m %s\n' "$*"; }

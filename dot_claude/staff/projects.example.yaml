@@ -1,0 +1,14 @@
+# Copy to ~/.claude/staff/projects.yaml and edit. That file is machine-local
+# and is NOT synced by chezmoi (see .chezmoiignore). Keep real paths and
+# internal names out of this example.
+projects:
+  - name: example-app          # nickname you will say to the chief
+    path: ~/src/example-app    # absolute or ~-relative repo path
+    default_branch: main
+    ticket_prefixes: [EX]      # Jira keys like EX-123 route here
+    deploy: [github, terraform-ecs]   # any of: github, terraform-ecs, dbt
+  - name: example-dbt
+    path: ~/src/example-dbt
+    default_branch: main
+    ticket_prefixes: [DATA]
+    deploy: [github, dbt]

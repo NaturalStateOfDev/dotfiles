@@ -50,3 +50,15 @@ chezmoi merge <file>  # reconcile when both versions have good parts
 This repo is public. No secrets, no personal information, no
 employer-specific values — ever. Machine-local config belongs in
 `~/.zshrc.local`; per-machine identity in chezmoi template data.
+
+## Claude Code agent team
+
+`dot_claude/agents/` holds a coordinator (`chief-of-staff`) and specialists
+(`ticket-implementer`, `task-documenter`, `staff-reviewer`, `deploy-checker`,
+`pr-janitor`, `staff-auditor`). Invoke with `/staff <task>`, `/staff review`,
+or `/staff status`. Each repo the chief works in gets `docs/staff/ledger.md`.
+
+Per-machine project registry: copy `~/.claude/staff/projects.example.yaml`
+to `~/.claude/staff/projects.yaml` (ignored by chezmoi) and fill in paths.
+
+Lint agent files before committing: `scripts/check-agents.sh`.

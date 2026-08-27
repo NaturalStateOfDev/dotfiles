@@ -1,6 +1,14 @@
-# Repo documentation — never applied to $HOME.
+# Repo-only files — never applied to $HOME.
 README.md
 CLAUDE.md
+.gitignore
+docs
+docs/**
+scripts
+scripts/**
+
+# Machine-local project registry for the chief-of-staff agent.
+.claude/staff/projects.yaml
 
 {{ if eq .chezmoi.os "windows" -}}
 # zsh/oh-my-zsh/starship are Linux-side only.

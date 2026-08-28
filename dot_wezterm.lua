@@ -133,6 +133,11 @@ for i = 1, 9 do
   table.insert(config.keys, { key = tostring(i), mods = 'LEADER', action = act.ActivateTab(i - 1) })
 end
 
+-- Forward delete. With enable_kitty_keyboard on, WezTerm can hand legacy apps
+-- (zsh, etc.) 0x7f for the Delete key, which they read as backspace. Send the
+-- standard CSI sequence explicitly so Delete always erases to the right.
+table.insert(config.keys, { key = 'phys:Delete', mods = 'NONE', action = act.SendString '\x1b[3~' })
+
 
 -- There are mouse binding to mimc Windows Terminal and let you copy
 -- To copy just highlight something and right click. Simple
@@ -177,4 +182,4 @@ wezterm.on('format-tab-title', function(tab, _tabs, _panes, _config, _hover, _ma
   return string.format(' %d  %s ', index, title)
 end)
 
-return config
+return config

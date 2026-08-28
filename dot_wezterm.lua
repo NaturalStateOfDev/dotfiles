@@ -43,7 +43,9 @@ config.color_scheme = 'Monokai Pro Ristretto (Gogh)'
 -- makes my cursor blink
 config.default_cursor_style = 'BlinkingBar'
 
-config.enable_kitty_keyboard = true
+-- Off: Claude Code (2.1.247+, still broken in 2.1.250) drops Shift on keys under the kitty
+-- keyboard protocol — no capitals or shifted symbols. Shift+Enter is handled by a binding below.
+config.enable_kitty_keyboard = false
 
 -- Aesthetics: slight transparency; Acrylic blur where Windows supports it.
 config.window_background_opacity = 0.95
@@ -73,6 +75,8 @@ config.tab_max_width = 32
 config.leader = { key = 'Space', mods = 'CTRL', timeout_milliseconds = 1000 }
 
 config.keys = {
+  -- Shift+Enter → newline in Claude Code (kitty protocol is off, so send Alt+Enter instead).
+  { key = 'Enter', mods = 'SHIFT', action = act.SendString '\x1b\r' },
   -- Splits (leader + |  or  leader + -)
   -- Side-by-side split. '\' alone (no shift) is the reliable binding — sidesteps
   -- shifted-glyph detection issues. '|' and 'Shift+\' kept as fallbacks.
@@ -173,4 +177,4 @@ wezterm.on('format-tab-title', function(tab, _tabs, _panes, _config, _hover, _ma
   return string.format(' %d  %s ', index, title)
 end)
 
-return config
+return config

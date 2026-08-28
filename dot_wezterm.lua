@@ -133,7 +133,7 @@ for i = 1, 9 do
   table.insert(config.keys, { key = tostring(i), mods = 'LEADER', action = act.ActivateTab(i - 1) })
 end
 
--- Forward delete. With enable_kitty_keyboard on, WezTerm can hand legacy apps
+-- Forward delete. Depending on keyboard-protocol state, WezTerm can hand legacy apps
 -- (zsh, etc.) 0x7f for the Delete key, which they read as backspace. Send the
 -- standard CSI sequence explicitly so Delete always erases to the right.
 table.insert(config.keys, { key = 'phys:Delete', mods = 'NONE', action = act.SendString '\x1b[3~' })

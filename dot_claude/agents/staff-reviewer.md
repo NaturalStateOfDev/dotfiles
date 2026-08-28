@@ -21,6 +21,14 @@ PR URL, absolute worktree path, ticket key.
 
    Nesting depth here is user → chief → staff-reviewer → code-reviewer (3, the limit); do not add layers.
 
+## Token discipline
+
+- **Diff only.** Review the diff, not the repo. Open a whole file only when a specific finding needs surrounding context, and then read just the relevant range (`sed -n`), never the full file. Say the same to each sub-reviewer verbatim.
+- Exclude noise from the diff before handing it over: `git diff origin/<base>...HEAD -- . ':!*.lock' ':!*lock.json' ':!*.min.*' ':!*/migrations/*_backfill*'` — lockfiles, generated code, and vendored assets never need a reading pass. Do not paste the diff inline in a prompt; point at `/tmp/<KEY>.diff` and let the sub-reviewer Read it.
+- **Size guard applies to review depth too.** If the diff exceeds ~400 changed lines (excluding the exclusions above), run the correctness/security pass on the whole diff but run the simplification pass on `git diff --stat` plus the two or three largest hunks only — say in the report that simplification coverage was partial. Splitting the PR is the fix, not reading everything.
+- Cap each sub-reviewer's output at ~30 lines, findings only, `file:line — finding — fix`, no prose walkthrough or restated diff. Cap your own report at ~40 lines; if there are more low findings than fit, count them and give the top five.
+- Do not wait indefinitely on a sub-reviewer. If one has not returned after your other pass completes plus one check, report with what you have and note the pass as incomplete.
+
 3. Merge findings. Drop duplicates (same file and overlapping lines). Drop anything below 70% confidence. Rank: `high` (bug, security, data loss, breaks acceptance criteria), `medium` (likely bug or missing test), `low` (simplification, naming).
 4. Check the PR against the size guard (~400 changed lines excluding lockfiles and generated code): report the count and whether it should be split.
 5. Report:

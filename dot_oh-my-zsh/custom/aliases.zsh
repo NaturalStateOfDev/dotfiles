@@ -16,3 +16,22 @@
 # --- git ---
 # Jump to the default branch (main/master/trunk — omz detects it) and pull.
 alias gsync='git checkout "$(git_main_branch)" && git pull'
+
+# --- nix ---
+# Full NixOS update in one go: bump flake inputs, check for a newer GE-Proton
+# release (the flake's own updater, since flake inputs can't track GitHub
+# releases), then rebuild + switch. Prints the diff of what changed first so
+# a surprise bump is visible before the switch. Override the flake location
+# with $NIXOS_FLAKE (defaults to ~/myNixOS).
+nupdate() {
+  local flake="${NIXOS_FLAKE:-$HOME/myNixOS}"
+  [[ -f "$flake/flake.nix" ]] || { echo "nupdate: no flake at $flake" >&2; return 1; }
+  (
+    set -e
+    cd "$flake"
+    nix flake update
+    nix run .#update-proton-ge
+    git --no-pager diff --stat
+    sudo nixos-rebuild switch --flake .
+  )
+}

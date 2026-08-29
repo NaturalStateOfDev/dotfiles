@@ -1,7 +1,7 @@
 {{- $name := promptStringOnce . "name" "Git author name" -}}
 {{- $email := promptStringOnce . "email" "Git author email" -}}
 {{- $work := promptBoolOnce . "work" "Is this a work machine" -}}
-{{- $machine := promptChoiceOnce . "machine" (list "omarchy-desktop" "omarchy-laptop" "wsl-work" "windows-work" "other-linux") -}}
+{{- $machine := promptChoiceOnce . "machine" "Which machine is this" (list "omarchy-desktop" "omarchy-laptop" "wsl-work" "windows-work" "other-linux") -}}
 # Machine-local chezmoi config — regenerated from .chezmoi.toml.tmpl on `chezmoi init`.
 # Holds per-machine identity/data so none of it lives in the (public) repo.
 #

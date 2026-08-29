@@ -1,0 +1,41 @@
+{{ if hasPrefix "omarchy-" (dig "machine" "" .) -}}
+#!/usr/bin/env bash
+# Apps and defaults on top of a stock Omarchy install (desktop + laptop).
+# Everything Omarchy itself ships (Hyprland, tmux, ghostty, shell bar, ...)
+# is deliberately NOT here — a fresh install already provides it. This is
+# only what was added by hand. Runs after apply, re-runs when this file
+# changes. Idempotent: every step checks before acting.
+set -u
+
+info() { printf '\033[1;36m[apps]\033[0m %s\n' "$*"; }
+command -v omarchy >/dev/null 2>&1 || { info "not an Omarchy machine — skipping"; exit 0; }
+
+# --- packages ---------------------------------------------------------------
+# omarchy pkg add is idempotent (pacman --needed + AUR fallback via yay).
+COMMON=(firefox discord qbittorrent proton-pass-bin syncthing nfs-utils)
+omarchy pkg add "${COMMON[@]}" || info "some package installs failed — retry manually"
+
+{{ if eq .machine "omarchy-desktop" -}}
+# Gaming stack (AMD dGPU). Steam/Lutris/Wine via umu; lug-helper for Star Citizen.
+GAMING=(steam lutris gamescope umu-launcher wine-staging winetricks wine-gecko wine-mono
+        lib32-vulkan-radeon lug-helper)
+omarchy pkg add "${GAMING[@]}" || info "some gaming packages failed — retry manually"
+
+# Local LLM runtime (AMD GPU → rocm build, not cuda). Service stays disabled;
+# start on demand with `systemctl start ollama`.
+command -v ollama >/dev/null 2>&1 || omarchy pkg add ollama-rocm || info "ollama-rocm install failed"
+{{ end -}}
+
+# --- defaults ---------------------------------------------------------------
+[ "$(omarchy-theme-current 2>/dev/null || omarchy theme current 2>/dev/null)" = "tokyo-night" ] ||
+  omarchy-theme-set tokyo-night 2>/dev/null || info "theme set failed — run: omarchy theme set tokyo-night"
+
+[ "$(omarchy-default-agent)" = "claude" ] || omarchy-default-agent claude
+
+[ "$(omarchy-default-browser)" = "firefox" ] || omarchy-default-browser firefox
+
+# mise-managed CLIs (chezmoi, gh, claude, codex, node) from ~/.config/mise/config.toml.
+command -v mise >/dev/null 2>&1 && mise install --yes 2>/dev/null || info "run: mise install"
+
+info "manual follow-ups: gh auth login · atuin login && atuin sync · copy ~/.ssh · Steam/Proton Pass sign-in"
+{{ end -}}

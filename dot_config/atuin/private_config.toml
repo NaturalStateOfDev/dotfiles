@@ -1,0 +1,9 @@
+# atuin — synced shell history. Only non-default settings; see
+# https://docs.atuin.sh/configuration/config/ for the full reference.
+# Login/sync is manual on a new machine: `atuin login && atuin sync`.
+enter_accept = true
+search_mode = "daemon-fuzzy"
+
+[daemon]
+enabled = true
+autostart = true

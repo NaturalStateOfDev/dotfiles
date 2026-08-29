@@ -58,6 +58,10 @@ chezmoi merge <file>  # reconcile when both versions have good parts
 | `dot_zshrc` | `~/.zshrc` | sources `~/.zshrc.local` (machine-local, never synced) last |
 | `dot_oh-my-zsh/custom/aliases.zsh` | omz custom dir | alias naming scheme documented in-file |
 | `dot_gitconfig.tmpl` | `~/.gitconfig` | name/email from per-machine template data |
+| `dot_config/mise/config.toml` | `~/.config/mise/config.toml` | CLI toolchain (chezmoi, gh, claude, codex, node); `mise install` |
+| `dot_config/atuin/private_config.toml` | `~/.config/atuin/config.toml` | non-default atuin settings only; `atuin login` is manual |
+| `dot_config/omarchy/branding/` | `~/.config/omarchy/branding/` | custom about/screensaver art (Omarchy only) |
+| `run_onchange_after_30-omarchy-desktop-apps.sh.tmpl` | personal Omarchy machines | hand-added packages (gaming stack on the desktop), theme, default agent/browser |
 | `dot_config/starship.toml` | `~/.config/starship.toml` | prompt config |
 | `dot_claude/` | `~/.claude/` | global CLAUDE.md + `/dotfiles` skill |
 | `dot_wezterm.lua`, `dot_config/wezterm/` | WezTerm config + background assets | Windows + native Linux; skipped in WSL (WezTerm lives host-side). Platform quirks handled inside the config via `target_triple` / WSL-domain detection. Install a CaskaydiaCove Nerd Font for the configured font stack. |

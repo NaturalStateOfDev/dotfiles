@@ -1,0 +1,6 @@
+[tools]
+chezmoi = "latest"
+claude = "latest"
+codex = "latest"
+gh = "latest"
+node = "26.8.1"

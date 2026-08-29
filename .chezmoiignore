@@ -8,6 +8,11 @@ CLAUDE.md
 .zshrc
 # nas-backup is a bash+rsync script against an NFS mount; Linux only.
 .local/bin/nas-backup
+# Linux-side CLIs/history; Windows manages its own toolchain.
+.config/mise
+.config/mise/**
+.config/atuin
+.config/atuin/**
 .oh-my-zsh
 .oh-my-zsh/**
 .config/starship.toml

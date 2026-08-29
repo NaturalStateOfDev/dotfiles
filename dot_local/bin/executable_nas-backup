@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# nas-backup -- rsync $HOME to/from the NAS for machine migrations.
+#
+#   nas-backup                 back up $HOME -> $NAS_BACKUP_ROOT/<hostname>/
+#   nas-backup -n              dry run (list what would transfer)
+#   nas-backup restore <name>  restore $NAS_BACKUP_ROOT/<name>/ -> $HOME
+#   nas-backup list            show backups on the NAS
+#
+# Reinstallable bulk (Steam, game installs, caches, package-manager stores)
+# is excluded; see EXCLUDES. Edit that list rather than adding flags.
+#
+# The target is an NFS share with mapall on the server side, so ownership is
+# neither preserved nor needed: -rlptD, not -a (no -o/-g). Perms are kept,
+# so ~/.ssh and ~/.gnupg come back 700 without extra fixing.
+set -euo pipefail
+
+NAS_BACKUP_ROOT="${NAS_BACKUP_ROOT:-/mnt/nas/home}"
+
+EXCLUDES=(
+  # regenerated
+  .cache
+  .local/share/Trash
+  .local/share/baloo
+  .local/share/recently-used.xbel
+  '.zcompdump*'
+  # reinstallable
+  .local/share/Steam
+  .local/share/umu
+  .local/share/lutris/runners
+  .local/share/flatpak
+  Games
+  .rustup
+  .cargo/registry
+  .cargo/git
+  .npm
+  .local/share/uv
+  .local/share/claude/versions
+  # not ours
+  .local/share/chezmoi/.git/objects   # cloned fresh; source files still copied
+  # mount points / runtime
+  .gvfs
+  '.local/share/flatpak/**/cache'
+  '.var/app/*/cache'
+  'snap'
+)
+
+usage() { sed -n '2,9p' "$0" | sed 's/^# \{0,1\}//'; exit "${1:-0}"; }
+
+need_mount() {
+  # Touching the path is what triggers the systemd automount.
+  if ! ls "$NAS_BACKUP_ROOT" >/dev/null 2>&1; then
+    echo "nas-backup: $NAS_BACKUP_ROOT is not reachable (NAS down or not mounted?)" >&2
+    exit 1
+  fi
+}
+
+rsync_common=(
+  --recursive --links --perms --times --devices --specials
+  --human-readable --info=progress2,stats2
+  --partial
+  --delete --delete-excluded
+)
+
+do_backup() {
+  local dry="$1"
+  local dest="$NAS_BACKUP_ROOT/$(hostname)"
+  need_mount
+  mkdir -p "$dest"
+  local ex=(); for e in "${EXCLUDES[@]}"; do ex+=(--exclude="/$e"); done
+  echo "nas-backup: $HOME/ -> $dest/  ${dry:+(DRY RUN)}"
+  # Exit 24 = "some files vanished before they could be transferred": expected
+  # when $HOME is in use (browser caches, files being pruned) -- not a failure.
+  local rc=0
+  rsync "${rsync_common[@]}" ${dry:+--dry-run} "${ex[@]}" "$HOME/" "$dest/" || rc=$?
+  [[ $rc -eq 0 || $rc -eq 24 ]] || { echo "nas-backup: rsync failed (exit $rc)" >&2; exit "$rc"; }
+  [[ -n "$dry" ]] || date -Is > "$dest/.nas-backup-last"
+}
+
+do_restore() {
+  local name="$1" dry="$2"
+  local src="$NAS_BACKUP_ROOT/$name"
+  need_mount
+  [[ -d "$src" ]] || { echo "nas-backup: no backup named '$name' under $NAS_BACKUP_ROOT" >&2; exit 1; }
+  echo "nas-backup: $src/ -> $HOME/  ${dry:+(DRY RUN)}"
+  echo "  (restore does NOT --delete: files already in \$HOME are kept, matching ones overwritten)"
+  # No --delete on restore: never wipe what the new install put in $HOME.
+  local opts=("${rsync_common[@]}"); opts=("${opts[@]/--delete/}"); opts=("${opts[@]/--delete-excluded/}")
+  local rc=0
+  rsync "${opts[@]}" ${dry:+--dry-run} --exclude=/.nas-backup-last "$src/" "$HOME/" || rc=$?
+  [[ $rc -eq 0 || $rc -eq 24 ]] || { echo "nas-backup: rsync failed (exit $rc)" >&2; exit "$rc"; }
+}
+
+dry=""
+[[ "${1:-}" == "-n" || "${1:-}" == "--dry-run" ]] && { dry=1; shift; }
+case "${1:-backup}" in
+  backup)   do_backup "$dry" ;;
+  restore)  [[ -n "${2:-}" ]] || usage 1
+            [[ "${3:-}" == "-n" ]] && dry=1
+            do_restore "$2" "$dry" ;;
+  list)     need_mount
+            for d in "$NAS_BACKUP_ROOT"/*/; do
+              [[ -d "$d" ]] || continue
+              printf '%-20s %s\n' "$(basename "$d")" "$(cat "$d/.nas-backup-last" 2>/dev/null || echo '(no completed backup)')"
+            done ;;
+  -h|--help) usage ;;
+  *)        usage 1 ;;
+esac

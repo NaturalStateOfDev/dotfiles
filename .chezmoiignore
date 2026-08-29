@@ -5,6 +5,8 @@ CLAUDE.md
 {{ if eq .chezmoi.os "windows" -}}
 # zsh/oh-my-zsh/starship are Linux-side only.
 .zshrc
+# nas-backup is a bash+rsync script against an NFS mount; Linux only.
+.local/bin/nas-backup
 .oh-my-zsh
 .oh-my-zsh/**
 .config/starship.toml

@@ -27,8 +27,8 @@ if command -v apt-get >/dev/null 2>&1; then
   fi
 fi
 
-# Arch / Omarchy — omarchy pkg add is idempotent and handles the AUR fallback,
-# so prefer it over raw pacman. Plain Arch without Omarchy falls back to pacman.
+# Arch / Omarchy — omarchy pkg add is an idempotent `pacman -S --needed`
+# (repo packages only, no AUR fallback), so prefer it over raw pacman. Plain Arch without Omarchy falls back to pacman.
 if command -v omarchy >/dev/null 2>&1; then
   info "installing packages via omarchy pkg (zsh git curl fzf zoxide eza)"
   omarchy pkg add zsh git curl fzf zoxide eza ||

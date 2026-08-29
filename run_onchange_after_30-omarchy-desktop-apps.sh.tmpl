@@ -11,15 +11,20 @@ info() { printf '\033[1;36m[apps]\033[0m %s\n' "$*"; }
 command -v omarchy >/dev/null 2>&1 || { info "not an Omarchy machine — skipping"; exit 0; }
 
 # --- packages ---------------------------------------------------------------
-# omarchy pkg add is idempotent (pacman --needed + AUR fallback via yay).
-COMMON=(firefox discord qbittorrent proton-pass-bin syncthing nfs-utils)
+# omarchy pkg add is a plain `pacman -S --needed` — NO AUR fallback. One AUR
+# name in the list makes pacman reject the whole batch, so repo and AUR
+# packages are installed separately (AUR via yay, which is in Omarchy base).
+aur_add() { yay -S --needed --noconfirm "$@" || info "AUR install failed for: $*"; }
+COMMON=(firefox discord qbittorrent syncthing nfs-utils)
 omarchy pkg add "${COMMON[@]}" || info "some package installs failed — retry manually"
+aur_add proton-pass-bin
 
 {{ if eq .machine "omarchy-desktop" -}}
 # Gaming stack (AMD dGPU). Steam/Lutris/Wine via umu; lug-helper for Star Citizen.
 GAMING=(steam lutris gamescope umu-launcher wine-staging winetricks wine-gecko wine-mono
-        lib32-vulkan-radeon lug-helper)
+        lib32-vulkan-radeon)
 omarchy pkg add "${GAMING[@]}" || info "some gaming packages failed — retry manually"
+aur_add lug-helper
 
 # Local LLM runtime (AMD GPU → rocm build, not cuda). Service stays disabled;
 # start on demand with `systemctl start ollama`.

@@ -36,9 +36,29 @@ _omarchy_zsh_source "$OMARCHY_PATH/default/bash/aliases"
 #   rsyncing             rsw / lsw / dsw
 #   worktrees            ga / gd
 #   ssh-reconnect        ssh wrapper that disarms terminal modes on a drop
-for _f in compression ssh-port-forwarding rsyncing worktrees ssh-reconnect; do
+# worktrees is handled separately below (name collision with oh-my-zsh).
+for _f in compression ssh-port-forwarding rsyncing ssh-reconnect; do
   _omarchy_zsh_source "$OMARCHY_PATH/default/bash/fns/$_f"
 done
+
+# worktrees needs renaming, not just sourcing. oh-my-zsh's git plugin already
+# defines ga/gd as aliases (git add / git diff), and zsh refuses to define a
+# function whose name is an existing alias -- the bare source fails with
+# "defining function based on alias `ga'". Worse, Omarchy's gd REMOVES a
+# worktree and branch, so silently shadowing `git diff` with it would be a
+# genuinely bad trade. Load them as wta/wtd and leave ga/gd to oh-my-zsh.
+if [[ -r "$OMARCHY_PATH/default/bash/fns/worktrees" ]]; then
+  _oz_ga="$(alias ga 2>/dev/null)"; _oz_gd="$(alias gd 2>/dev/null)"
+  unalias ga gd 2>/dev/null
+  source "$OMARCHY_PATH/default/bash/fns/worktrees"
+  # zsh exposes function bodies as the `functions` assoc array, so a rename
+  # is a copy plus an unfunction.
+  functions[wta]="$functions[ga]"; functions[wtd]="$functions[gd]"
+  unfunction ga gd 2>/dev/null
+  [[ -n $_oz_ga ]] && eval "alias $_oz_ga"
+  [[ -n $_oz_gd ]] && eval "alias $_oz_gd"
+  unset _oz_ga _oz_gd
+fi
 
 # These index arrays from 0 (`${panes[0]}`, `${columns[-1]}`), which is bash
 # semantics — zsh arrays start at 1, so `[0]` would come back empty. zsh's

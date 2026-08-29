@@ -6,6 +6,9 @@
 #   nas-backup restore <name>  restore $NAS_BACKUP_ROOT/<name>/ -> $HOME
 #   nas-backup list            show backups on the NAS
 #
+# The backup dir is a mirror (--delete): put NAS-only extras in <dest>/_keep/,
+# which is protected, or inside $HOME.
+#
 # Reinstallable bulk (Steam, game installs, caches, package-manager stores)
 # is excluded; see EXCLUDES. Edit that list rather than adding flags.
 #
@@ -59,6 +62,9 @@ rsync_common=(
   --human-readable --info=progress2,stats2
   --partial
   --delete --delete-excluded
+  # Never delete a _keep/ dir in the destination: a place for extras that
+  # live only on the NAS (e.g. an ESP copy) and would otherwise be mirrored away.
+  --filter='P /_keep' --filter='P /_keep/**'
 )
 
 do_backup() {

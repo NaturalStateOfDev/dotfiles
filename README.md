@@ -36,6 +36,12 @@ configs — this repo's `starship.toml` deliberately wins, since Omarchy's copy
 is static rather than theme-generated. WezTerm is skipped there (foot is the
 default terminal, themed by Omarchy).
 
+Personal Omarchy machines also get the home-lab script: NFS automounts are
+lazy (`x-systemd.automount`, 10-min idle unmount) so a missing NAS never
+blocks boot. Syncthing mirrors `~/Sync` with the NAS; the NAS peer keeps
+staggered file versions, so it — not the mirror — is the undo layer.
+Pairing with the NAS is manual (device ID exchange).
+
 ## Already-configured machine (adopting, not overwriting)
 
 ```sh
@@ -60,6 +66,7 @@ chezmoi merge <file>  # reconcile when both versions have good parts
 | `dot_config/omarchy/shell.toml` | `~/.config/omarchy/shell.toml` | Bar/shell type scale; merged over the active theme so it survives `omarchy theme set` |
 | `dot_config/omarchy/hooks/post-update.d/` | Omarchy update hook | Warns when `omarchy update` migrations leave `$HOME` diverged from the source |
 | `run_once_before_10-bootstrap.sh.tmpl` | — | new-Linux-machine setup, runs once (apt, pacman, or `omarchy pkg`) |
+| `run_onchange_after_20-omarchy-home-lab.sh.tmpl` | — | `omarchy-*` machines only: NAS NFS automounts (`/mnt/nas`, `/mnt/media/{movies,tv}`), Syncthing service + ufw rule, Proton Mail web app. Re-runs when edited |
 | `.chezmoi.toml.tmpl` | `~/.config/chezmoi/chezmoi.toml` | prompts once per machine |
 
 ## Rules

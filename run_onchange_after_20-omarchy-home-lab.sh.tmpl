@@ -1,0 +1,63 @@
+{{ if hasPrefix "omarchy-" (dig "machine" "" .) -}}
+#!/usr/bin/env bash
+# Home-lab wiring for personal Omarchy machines (desktop + laptop):
+#   - NFS automounts for the NAS user share and media libraries
+#   - Syncthing (user service + firewall rule) for the live ~/Sync mirror
+#   - Proton Mail as an Omarchy web app
+# Runs after apply, re-runs whenever this file changes. Idempotent and
+# best-effort: root-only steps are skipped with a hint when sudo can't
+# prompt (non-interactive apply), and can be re-run with `chezmoi apply --force`.
+set -u
+
+info() { printf '\033[1;35m[home-lab]\033[0m %s\n' "$*"; }
+
+NAS="${NAS_HOST:-192.168.1.10}"
+NFS_OPTS="_netdev,noauto,x-systemd.automount,x-systemd.idle-timeout=600,x-systemd.mount-timeout=10,hard,timeo=600,rsize=1048576,wsize=1048576"
+# export path -> mountpoint
+MOUNTS=(
+  "/mnt/pool-1/users/tyler   /mnt/nas"
+  "/mnt/pool-1/media/Movies  /mnt/media/movies"
+  "/mnt/pool-1/media/TV-Shows /mnt/media/tv"
+)
+
+SUDO=""
+if sudo -n true 2>/dev/null; then SUDO="sudo -n"; elif [ -t 0 ]; then SUDO="sudo"; fi
+
+# --- packages ---------------------------------------------------------------
+if command -v omarchy >/dev/null 2>&1; then
+  omarchy pkg add nfs-utils syncthing || info "package install failed — install nfs-utils syncthing manually"
+fi
+
+# --- NFS automounts ---------------------------------------------------------
+if [ -n "$SUDO" ]; then
+  units=()
+  for entry in "${MOUNTS[@]}"; do
+    read -r export mnt <<<"$entry"
+    if ! grep -qs "^$NAS:$export[[:space:]]" /etc/fstab; then
+      info "adding fstab entry for $mnt"
+      $SUDO mkdir -p "$mnt"
+      printf '%s:%s %s nfs %s 0 0\n' "$NAS" "$export" "$mnt" "$NFS_OPTS" | $SUDO tee -a /etc/fstab >/dev/null
+    fi
+    units+=("$(systemd-escape -p --suffix=automount "$mnt")")
+  done
+  $SUDO systemctl daemon-reload
+  $SUDO systemctl start "${units[@]}" 2>/dev/null || info "automount start failed — is the NAS reachable?"
+else
+  info "sudo unavailable — skipping NFS fstab entries (re-run interactively)"
+fi
+
+# --- Syncthing --------------------------------------------------------------
+if command -v syncthing >/dev/null 2>&1; then
+  systemctl --user enable --now syncthing 2>/dev/null || true
+  if [ -n "$SUDO" ] && command -v ufw >/dev/null 2>&1; then
+    $SUDO ufw status 2>/dev/null | grep -q '^Syncthing' || $SUDO ufw allow syncthing >/dev/null
+  fi
+  [ -d "$HOME/Sync" ] || info "Syncthing: pair with the NAS (:20910) and accept the 'sync' folder into ~/Sync"
+fi
+
+# --- Web apps ---------------------------------------------------------------
+if command -v omarchy-webapp-install >/dev/null 2>&1; then
+  [ -f "$HOME/.local/share/applications/Proton Mail.desktop" ] ||
+    omarchy-webapp-install "Proton Mail" https://mail.proton.me https://mail.proton.me/assets/favicon.ico
+fi
+{{ end -}}

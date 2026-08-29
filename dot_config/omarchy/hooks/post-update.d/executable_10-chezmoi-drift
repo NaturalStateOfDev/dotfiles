@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# `omarchy update` runs migrations that edit files in ~/.config directly.
+# chezmoi applies real files (not symlinks), so any such edit leaves the
+# chezmoi source stale and silently diverged. Report it instead of letting
+# it rot — the next `chezmoi apply` would otherwise revert Omarchy's change,
+# or `chezmoi re-add` would swallow it without review.
+command -v chezmoi >/dev/null 2>&1 || exit 0
+chezmoi source-path >/dev/null 2>&1 || exit 0
+
+if ! chezmoi verify >/dev/null 2>&1; then
+  echo "chezmoi: \$HOME has drifted from the dotfiles source after this update."
+  echo "  review:  chezmoi diff"
+  echo "  keep Omarchy's change:  chezmoi re-add <path>"
+  echo "  keep yours:             chezmoi apply <path>"
+  omarchy-notification-send "Dotfiles drift" "omarchy update changed managed files — run: chezmoi diff" 2>/dev/null || true
+fi

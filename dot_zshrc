@@ -88,6 +88,11 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+# Omarchy's shell helpers (Omarchy machines only; the file is gated out
+# elsewhere by .chezmoiignore and no-ops if Omarchy isn't installed).
+# Sourced HERE, before our own config, so anything below overrides it.
+[[ -f "$HOME/.config/zsh/omarchy.zsh" ]] && source "$HOME/.config/zsh/omarchy.zsh"
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"

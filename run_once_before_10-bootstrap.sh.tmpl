@@ -27,17 +27,20 @@ if command -v apt-get >/dev/null 2>&1; then
   fi
 fi
 
-# NixOS system flake — the machine's declarative config lives in its own repo
-# (~/myNixOS), separate from these dotfiles: dotfiles are cross-platform $HOME
-# config, the flake defines one NixOS system, and flakes want to be a plain
-# git repo (flake.lock churn, edit-then-rebuild loop) rather than
-# chezmoi-managed. This clone is the bridge between the two on a fresh
-# machine; restore = chezmoi init + sudo nixos-rebuild switch --flake
-# ~/myNixOS#myMachine. Other distros skip it.
-if [ -e /etc/NIXOS ] && [ ! -d "$HOME/myNixOS" ]; then
-  info "cloning NixOS system flake"
-  git clone https://github.com/NaturalStateOfDev/myNixOS "$HOME/myNixOS" ||
-    info "myNixOS clone failed — clone it manually"
+# Arch / Omarchy — omarchy pkg add is idempotent and handles the AUR fallback,
+# so prefer it over raw pacman. Plain Arch without Omarchy falls back to pacman.
+if command -v omarchy >/dev/null 2>&1; then
+  info "installing packages via omarchy pkg (zsh git curl fzf zoxide eza)"
+  omarchy pkg add zsh git curl fzf zoxide eza ||
+    info "some omarchy pkg installs failed — install manually"
+elif command -v pacman >/dev/null 2>&1; then
+  if sudo -n true 2>/dev/null || [ -t 0 ]; then
+    info "installing packages via pacman (zsh git curl fzf zoxide eza)"
+    sudo pacman -S --needed --noconfirm zsh git curl fzf zoxide eza ||
+      info "some pacman packages unavailable — install manually"
+  else
+    info "sudo unavailable — skipping pacman packages"
+  fi
 fi
 
 # oh-my-zsh — KEEPZSHRC so it never clobbers the chezmoi-managed .zshrc.

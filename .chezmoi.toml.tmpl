@@ -1,9 +1,15 @@
 {{- $name := promptStringOnce . "name" "Git author name" -}}
 {{- $email := promptStringOnce . "email" "Git author email" -}}
 {{- $work := promptBoolOnce . "work" "Is this a work machine" -}}
+{{- $machine := promptChoiceOnce . "machine" (list "omarchy-desktop" "omarchy-laptop" "wsl-work" "windows-work" "other-linux") -}}
 # Machine-local chezmoi config — regenerated from .chezmoi.toml.tmpl on `chezmoi init`.
 # Holds per-machine identity/data so none of it lives in the (public) repo.
+#
+# `machine` is the gate every conditional reads. OS sniffing alone can't tell
+# a personal Omarchy desktop from a work one, and .chezmoi.osRelease doesn't
+# exist on Windows at all — so the class is declared once here instead.
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
     work = {{ $work }}
+    machine = {{ $machine | quote }}

@@ -1,3 +1,4 @@
+{{- $machine := dig "machine" "" . -}}
 # Repo documentation — never applied to $HOME.
 README.md
 CLAUDE.md
@@ -10,10 +11,43 @@ CLAUDE.md
 .oh-my-zsh
 .oh-my-zsh/**
 .config/starship.toml
+.config/zsh
+.config/zsh/**
+# Hyprland and the Omarchy shell don't exist off Omarchy.
+.config/hypr
+.config/hypr/**
+.config/omarchy
+.config/omarchy/**
 {{ else if contains "microsoft" (lower .chezmoi.kernel.osrelease) -}}
 # WSL: WezTerm runs on the Windows host, which manages its own copy.
 # Native Linux machines (no "microsoft" in the kernel release) DO get WezTerm.
 .wezterm.lua
 .config/wezterm
 .config/wezterm/**
+# No desktop inside WSL: no Hyprland, no Omarchy shell, no Omarchy zsh layer.
+.config/hypr
+.config/hypr/**
+.config/omarchy
+.config/omarchy/**
+.config/zsh/omarchy.zsh
+{{ else if eq .chezmoi.osRelease.id "omarchy" -}}
+# Omarchy sets ID=omarchy (ID_LIKE=arch) in /etc/os-release — testing for
+# "arch" here would silently skip every Omarchy machine.
+#
+# WezTerm isn't installed on Omarchy; foot is the default terminal and its
+# config is theme-generated into ~/.local/state/omarchy/current/theme/.
+.wezterm.lua
+.config/wezterm
+.config/wezterm/**
+{{ if ne $machine "omarchy-desktop" -}}
+# monitors.lua is the stacked-ultrawide layout for the desktop only.
+.config/hypr/monitors.lua
+{{ end -}}
+{{ else -}}
+# Plain Linux: no Omarchy integration and no Hyprland config.
+.config/hypr
+.config/hypr/**
+.config/omarchy
+.config/omarchy/**
+.config/zsh/omarchy.zsh
 {{ end -}}

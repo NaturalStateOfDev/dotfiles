@@ -1,0 +1,11 @@
+# Machine-level Omarchy shell overrides. Merged OVER the current theme's
+# shell.toml, so these survive `omarchy theme set` instead of being lost
+# with the theme. Only the keys below are overridden; everything else keeps
+# coming from the theme.
+
+[font]
+# rem root for the shell's type scale (theme default: 12). The bar's
+# height tracks this via [bar] scale-with-font, so text and bar grow
+# together. Affects ONLY the Omarchy shell — bar, menus, notifications.
+# GTK apps and terminals have their own font settings and are untouched.
+base-size = 14

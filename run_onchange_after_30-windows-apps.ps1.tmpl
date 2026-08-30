@@ -1,0 +1,28 @@
+{{ if eq .chezmoi.os "windows" -}}
+# Apps on Windows machines, installed via winget. Runs after apply, re-runs
+# when this file changes. Idempotent: winget skips packages already present.
+# Counterpart of run_onchange_after_30-omarchy-desktop-apps.sh for Windows.
+# WSL is deliberately NOT covered — GUI/mount tools belong on the host.
+$ErrorActionPreference = 'Continue'
+
+function Info($msg) { Write-Host "[apps] $msg" -ForegroundColor Cyan }
+
+if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
+    Info "winget not found — install 'App Installer' from the Microsoft Store, then: chezmoi apply --force"
+    exit 0
+}
+
+# winget package IDs (find with: winget search <name>)
+$Apps = @(
+    'IDRIX.VeraCrypt'
+)
+
+foreach ($id in $Apps) {
+    if (winget list --id $id --exact --accept-source-agreements 2>$null | Select-String -Quiet $id) {
+        continue
+    }
+    Info "installing $id"
+    winget install --id $id --exact --silent --accept-package-agreements --accept-source-agreements
+    if ($LASTEXITCODE -ne 0) { Info "$id failed (exit $LASTEXITCODE) — retry manually: winget install --id $id" }
+}
+{{ end -}}

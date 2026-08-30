@@ -15,7 +15,7 @@ command -v omarchy >/dev/null 2>&1 || { info "not an Omarchy machine — skippin
 # name in the list makes pacman reject the whole batch, so repo and AUR
 # packages are installed separately (AUR via yay, which is in Omarchy base).
 aur_add() { yay -S --needed --noconfirm "$@" || info "AUR install failed for: $*"; }
-COMMON=(firefox discord qbittorrent syncthing nfs-utils)
+COMMON=(firefox discord qbittorrent syncthing nfs-utils veracrypt)
 omarchy pkg add "${COMMON[@]}" || info "some package installs failed — retry manually"
 aur_add proton-pass-bin
 

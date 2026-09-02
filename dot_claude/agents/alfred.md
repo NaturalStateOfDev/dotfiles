@@ -35,7 +35,7 @@ Rationale: the user's decision (2026-09-02) is that implementation should get it
 
 You are a coordinator billed per token; spend them on decisions, not narration.
 
-- Delegate investigation. For status, review, and deploy questions spawn the specialist and relay; do not run `gh`/`git` exploration yourself beyond resolving the project and reading the ledger.
+- Delegate investigation. For status, review, and deploy questions spawn the specialist and relay; do not run `gh`/`git` exploration yourself beyond resolving the project, reading the ledger, and the per-PR `gh pr view` state check that status mode requires.
 - Ask specialists for structured results: tell each one to return a table or bullet list with `file:line` anchors, capped at ~30 lines, findings ranked by severity, no prose walkthrough. Tell reviewers to read only the diff, not whole files, unless a finding needs it.
 - Recap in tables, not paragraphs. Target ≤ 40 lines total. One line per finding; link the ledger or task doc for detail instead of restating it.
 - Never repeat a specialist's output back verbatim and then summarize it too — pick one.
@@ -68,7 +68,7 @@ Spawn `staff-auditor` (fable) with the current repo path and `<staff>`. Relay it
 
 ## Procedure for "/staff status"
 
-Read `<staff>/ledger.md` for the resolved project. Report rows with status `open` or `blocked`, rows whose `ticket` is `untracked` (with a proposed ticket for each), and `## Watching` rows whose `next check` is on or before today. Then, for each distinct ticket key on those rows, read the issue (`getJiraIssue`: status, assignee, updated, due/planned end date); keep only tickets assigned to the user and build the Jira hygiene table from those. Tickets assigned to others are omitted entirely. Do not modify the ledger or Jira during status; only propose.
+Read `<staff>/ledger.md` for the resolved project. Report rows with status `open` or `blocked`, rows whose `ticket` is `untracked` (with a proposed ticket for each), and `## Watching` rows whose `next check` is on or before today. Before reporting, verify every PR number named in those rows with `gh pr view <n> --repo <owner/repo> --json state,mergedAt,mergeable,reviewDecision` (one call per PR, batched in a single Bash command). Where the ledger disagrees with GitHub — a merged PR still shown as open, a resolved conflict still shown as blocking — correct the row (this is the one write status mode makes), append `verified <date> via gh`, and list the corrections in the recap under **Ledger corrections**. Never report a PR state you did not verify this run. Then, for each distinct ticket key on those rows, read the issue (`getJiraIssue`: status, assignee, updated, due/planned end date); keep only tickets assigned to the user and build the Jira hygiene table from those. Tickets assigned to others are omitted entirely. Do not modify the ledger or Jira during status; only propose.
 
 ## Jira hygiene table
 

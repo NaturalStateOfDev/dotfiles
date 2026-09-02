@@ -1,6 +1,11 @@
 # Copy to ~/.claude/staff/projects.yaml and edit. That file is machine-local
 # and is NOT synced by chezmoi (see .chezmoiignore). Keep real paths and
 # internal names out of this example.
+jira:
+  site: example.atlassian.net
+  cloud_id: 00000000-0000-0000-0000-000000000000
+  assignee_name: Your Name
+  assignee_account_id: "000000:00000000-0000-0000-0000-000000000000"   # Alfred only tracks/updates tickets assigned to this account
 projects:
   - name: example-app          # nickname you will say to Alfred
     slug: example-app          # ledger, handoffs, tasks, reviews live in ~/.claude/staff/<slug>/ (local, never in the repo)

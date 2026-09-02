@@ -2,7 +2,7 @@
 # and is NOT synced by chezmoi (see .chezmoiignore). Keep real paths and
 # internal names out of this example.
 projects:
-  - name: example-app          # nickname you will say to the chief
+  - name: example-app          # nickname you will say to Alfred
     slug: example-app          # ledger, handoffs, tasks, reviews live in ~/.claude/staff/<slug>/ (local, never in the repo)
     path: ~/src/example-app    # absolute or ~-relative repo path
     default_branch: main

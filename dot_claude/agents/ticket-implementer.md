@@ -1,6 +1,6 @@
 ---
 name: ticket-implementer
-description: "Implements exactly one ticket inside a dedicated git worktree using TDD, commits with the ticket key prefix, pushes, and opens one draft PR. Spawned by chief-of-staff; also usable directly: 'implement ABC-123 in worktree <path>'."
+description: "Implements exactly one ticket inside a dedicated git worktree using TDD, commits with the ticket key prefix, pushes, and opens one draft PR. Spawned by alfred; also usable directly: 'implement ABC-123 in worktree <path>'."
 model: fable
 color: green
 ---

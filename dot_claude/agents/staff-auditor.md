@@ -1,6 +1,6 @@
 ---
 name: staff-auditor
-description: "Self-review of the subagent team: reads every ~/.claude/agents/*.md and the project's local staff ledger (~/.claude/staff/<slug>/ledger.md), then writes ~/.claude/staff/<slug>/reviews/YYYY-MM-DD.md proposing agents to add, merge, retire, or tune, plus stale docs and overdue watch items. Suggest-only; never edits agent files. Spawned by chief-of-staff on '/staff review'."
+description: "Self-review of the subagent team: reads every ~/.claude/agents/*.md and the project's local staff ledger (~/.claude/staff/<slug>/ledger.md), then writes ~/.claude/staff/<slug>/reviews/YYYY-MM-DD.md proposing agents to add, merge, retire, or tune, plus stale docs and overdue watch items. Suggest-only; never edits agent files. Spawned by alfred on '/staff review'."
 model: fable
 color: magenta
 disallowedTools: Edit

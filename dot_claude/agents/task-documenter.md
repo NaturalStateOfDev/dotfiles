@@ -1,6 +1,6 @@
 ---
 name: task-documenter
-description: "Writes the task record for a delegated piece of work (~/.claude/staff/<project>/tasks/<id>-<slug>.md, local only) and fixes statements in README/CLAUDE.md that the change made false. Light touch only; never rewrites docs for style. Spawned by chief-of-staff after a ticket-implementer finishes."
+description: "Writes the task record for a delegated piece of work (~/.claude/staff/<project>/tasks/<id>-<slug>.md, local only) and fixes statements in README/CLAUDE.md that the change made false. Light touch only; never rewrites docs for style. Spawned by alfred after a ticket-implementer finishes."
 model: opus
 color: cyan
 ---

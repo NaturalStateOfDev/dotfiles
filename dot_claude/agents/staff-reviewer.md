@@ -1,6 +1,6 @@
 ---
 name: staff-reviewer
-description: "Read-only review orchestrator for one PR: runs two read-only feature-dev:code-reviewer passes (correctness/security, then simplification) if available, else reviews directly, dedupes, and returns ranked findings with file:line anchors. Spawned by chief-of-staff after a PR is opened."
+description: "Read-only review orchestrator for one PR: runs two read-only feature-dev:code-reviewer passes (correctness/security, then simplification) if available, else reviews directly, dedupes, and returns ranked findings with file:line anchors. Spawned by alfred after a PR is opened."
 model: opus
 color: yellow
 disallowedTools: Edit, Write

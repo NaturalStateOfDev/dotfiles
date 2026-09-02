@@ -55,7 +55,7 @@ employer-specific values — ever. Machine-local config belongs in
 
 `dot_claude/agents/` holds a coordinator (`alfred`) and specialists
 (`ticket-implementer`, `task-documenter`, `staff-reviewer`, `deploy-checker`,
-`pr-janitor`, `staff-auditor`). Invoke with `/staff <task>`, `/staff review`,
+`pr-janitor`, `staff-auditor`). Invoke with `/staff <task>` (or `/alfred <task>`), `/staff review`,
 or `/staff status`. Each project Alfred works on gets a local ledger at `~/.claude/staff/<slug>/ledger.md`, never committed to the repo.
 
 Per-machine project registry: copy `~/.claude/staff/projects.example.yaml`

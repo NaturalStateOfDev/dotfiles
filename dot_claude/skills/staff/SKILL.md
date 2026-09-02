@@ -14,7 +14,7 @@ Route the request to the `chief-of-staff` subagent via the Agent tool with `suba
 | `/staff status` | `Report staff status for the project at <cwd or resolved path>.` |
 | `/staff cleanup <PR>` | `Run post-merge cleanup for <PR> in the project at <cwd or resolved path>.` |
 
-After the chief returns, relay its recap table to the user unchanged, then list anything it flagged as blocked or skipped.
+After the chief returns, relay its recap table and its Jira hygiene table to the user unchanged, then list anything it flagged as blocked, skipped, or untracked.
 
 If the chief asks a question (unknown project, missing registry entry, batch plan approval), surface it to the user and pass the answer back with SendMessage to the same agent so it keeps its context.
 

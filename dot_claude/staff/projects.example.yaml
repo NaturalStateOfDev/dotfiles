@@ -3,11 +3,13 @@
 # internal names out of this example.
 projects:
   - name: example-app          # nickname you will say to the chief
+    slug: example-app          # ledger, handoffs, tasks, reviews live in ~/.claude/staff/<slug>/ (local, never in the repo)
     path: ~/src/example-app    # absolute or ~-relative repo path
     default_branch: main
     ticket_prefixes: [EX]      # Jira keys like EX-123 route here
     deploy: [github, terraform-ecs]   # any of: github, terraform-ecs, dbt
   - name: example-dbt
+    slug: example-dbt
     path: ~/src/example-dbt
     default_branch: main
     ticket_prefixes: [DATA]

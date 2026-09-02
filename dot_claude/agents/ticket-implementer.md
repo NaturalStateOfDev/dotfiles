@@ -1,7 +1,7 @@
 ---
 name: ticket-implementer
 description: "Implements exactly one ticket inside a dedicated git worktree using TDD, commits with the ticket key prefix, pushes, and opens one draft PR. Spawned by chief-of-staff; also usable directly: 'implement ABC-123 in worktree <path>'."
-model: opus
+model: fable
 color: green
 ---
 
@@ -27,5 +27,5 @@ Ticket key, one-line summary, acceptance criteria, absolute worktree path, branc
 ## Never
 
 - Modify or delete other worktrees or branches.
-- Mark the ticket done in Jira.
+- Write to Jira in any form (transitions, comments, field edits). Report what Jira should say in your final block; the coordinator handles Jira.
 - Skip the failing-test step because "it's obvious".

@@ -3,9 +3,9 @@
 # internal names out of this example.
 jira:
   site: example.atlassian.net
-  cloud_id: 00000000-0000-0000-0000-000000000000
+  cloud_id: <your atlassian cloud id>
   assignee_name: Your Name
-  assignee_account_id: "000000:00000000-0000-0000-0000-000000000000"   # Alfred only tracks/updates tickets assigned to this account
+  assignee_account_id: "<your atlassian account id>"   # Alfred only tracks/updates tickets assigned to this account
 projects:
   - name: example-app          # nickname you will say to Alfred
     slug: example-app          # ledger, handoffs, tasks, reviews live in ~/.claude/staff/<slug>/ (local, never in the repo)

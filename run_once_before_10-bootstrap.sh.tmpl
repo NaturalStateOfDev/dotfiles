@@ -43,11 +43,26 @@ elif command -v pacman >/dev/null 2>&1; then
   fi
 fi
 
-# oh-my-zsh — KEEPZSHRC so it never clobbers the chezmoi-managed .zshrc.
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
+# oh-my-zsh — KEEP_ZSHRC so it never clobbers the chezmoi-managed .zshrc.
+# Test for the core script, not the directory: a ~/.oh-my-zsh holding only
+# custom/ (e.g. plugins cloned after a failed install) would otherwise skip the
+# install forever. The installer refuses an existing $ZSH, so park that dir and
+# merge its custom/ back afterwards — or restore it if the install fails.
+OMZ="$HOME/.oh-my-zsh"
+if [ ! -f "$OMZ/oh-my-zsh.sh" ]; then
   info "installing oh-my-zsh"
-  RUNZSH=no KEEPZSHRC=yes CHSH=no \
+  parked=""
+  if [ -d "$OMZ" ]; then parked="$OMZ.pre-install.$$"; mv "$OMZ" "$parked"; fi
+  RUNZSH=no KEEP_ZSHRC=yes CHSH=no ZSH="$OMZ" \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+  if [ -n "$parked" ]; then
+    if [ -f "$OMZ/oh-my-zsh.sh" ]; then
+      cp -a "$parked/custom/." "$OMZ/custom/" 2>/dev/null && rm -rf "$parked"
+    else
+      rm -rf "$OMZ"; mv "$parked" "$OMZ"
+      info "oh-my-zsh install failed — rerun this script"
+    fi
+  fi
 fi
 
 # Custom omz plugins referenced by .zshrc.

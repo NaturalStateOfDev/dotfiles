@@ -6,13 +6,13 @@ How the `/alfred` team in `dot_claude/agents/` works, and why it is built this w
 
 | Agent | Model | Job |
 |---|---|---|
-| `alfred` | opus | Coordinator. Resolves the project, plans a batch, spawns specialists, verifies their claims, keeps the local ledger and the ticket tracker current. Never writes app code itself. |
+| `alfred` | opus | Coordinator. Resolves the project, plans a batch, spawns specialists, verifies their claims, keeps the project's records and the ticket tracker current. Never writes app code itself. |
 | `ticket-implementer` | opus | One ticket, one git worktree, TDD, one draft PR. |
 | `pre-pr-simplifier` | opus | Behaviour-preserving simplification of the branch's diff. Stack-aware (dbt, Django). |
 | `staff-reviewer` | opus | Read-only review orchestrator: ranked findings with `file:line`. |
 | `deploy-checker` | opus | Read-only go/no-go: CI, Terraform plan drift, ECS health, dbt build. |
 | `task-documenter` | opus | Local task record, plus fixes to repo docs the change made false. |
-| `pr-janitor` | sonnet | Post-merge cleanup: worktree, branches, ledger row. |
+| `pr-janitor` | sonnet | Post-merge cleanup: worktree, branches, the merge record. |
 | `staff-auditor` | opus | Self-review of the team; suggest-only. |
 
 `opus` is the ceiling. `fable` is never used, because it exhausts session limits. Implementers are never downgraded to save tokens. Failure handling: retry once at the next tier up; an `opus` failure gets one sharper `opus` retry, then it is reported as blocked.
@@ -38,7 +38,8 @@ write code (TDD) → tests + pre-commit --all-files → simplify → review → 
 | Local overlays | `~/.claude/local/<agent>.md` | **no** | names, repos, accounts, ports, employer-specific conventions |
 | Project conventions | `<repo>/CLAUDE.md` | in that project's repo | rules the project's team also needs |
 | Memory | `~/.claude/projects/*/memory/` | no | facts learned across sessions |
-| Staff records | `~/.claude/staff/<slug>/` | no | ledger, task records, reviews, `projects.yaml` |
+| Records | an Obsidian vault project folder ("vault mode"), else `~/.claude/staff/<slug>/` | no | vault mode: the hub note's `## Log`, follow-up task notes in `Tasks/`, task records and reviews in `Agent Records/`; fallback: a local ledger, task records, reviews |
+| Staff dir | `~/.claude/staff/<slug>/` | no | `projects.yaml`, agent working notes, assets |
 
 Every synced agent reads its overlay, if one exists, right after its frontmatter; the overlay wins where it is more specific. Overlays point to memory files rather than copying them, so each fact has one home.
 

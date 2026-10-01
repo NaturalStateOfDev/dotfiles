@@ -62,7 +62,7 @@ The pipeline, model routing, ticket rules and layering are in
 
 Everything specific stays off this repo:
 - **Local overlays:** `~/.claude/local/<agent>.md` (ignored by chezmoi). Each synced agent reads its overlay, if present, for names, repos, accounts and ports.
-- **Staff records:** `~/.claude/staff/<slug>/` holds the ledger, task records and reviews, never committed.
+- **Records:** with `vault` set in `projects.yaml`, Alfred keeps records in an Obsidian vault project folder (hub `## Log`, `Tasks/`, `Agent Records/`) and follows the vault's `AGENTS.md`. Without it, `~/.claude/staff/<slug>/` holds a local ledger, task records and reviews. Never committed either way.
 - **Project registry:** copy `~/.claude/staff/projects.example.yaml` to `~/.claude/staff/projects.yaml` (ignored by chezmoi) and fill in paths.
 
 Lint agent files before committing: `scripts/check-agents.sh`.

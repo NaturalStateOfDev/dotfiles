@@ -6,9 +6,14 @@ jira:
   cloud_id: <your atlassian cloud id>
   assignee_name: Your Name
   assignee_account_id: "<your atlassian account id>"   # Alfred only tracks/updates tickets assigned to this account
+# Optional: keep records in an Obsidian vault ("vault mode"). Alfred then logs to
+# <vault>/Projects/<vault_project>/ (hub log, Tasks/, Agent Records/) and follows
+# the vault's AGENTS.md. Leave it out to use the local ledger in ~/.claude/staff/<slug>/.
+# vault: "/path/to/your/vault"
 projects:
   - name: example-app          # nickname you will say to Alfred
-    slug: example-app          # ledger, handoffs, tasks, reviews live in ~/.claude/staff/<slug>/ (local, never in the repo)
+    slug: example-app          # staff dir ~/.claude/staff/<slug>/ (local, never in the repo): agent notes, plus the ledger when no vault is set
+    # vault_project: Example App   # folder under <vault>/Projects/ (vault mode only)
     path: ~/src/example-app    # absolute or ~-relative repo path
     default_branch: main
     ticket_prefixes: [EX]      # Jira keys like EX-123 route here

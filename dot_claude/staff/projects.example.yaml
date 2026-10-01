@@ -14,6 +14,7 @@ projects:
   - name: example-app          # nickname you will say to Alfred
     slug: example-app          # staff dir ~/.claude/staff/<slug>/ (local, never in the repo): agent notes, plus the ledger when no vault is set
     # vault_project: Example App   # folder under <vault>/Projects/ (vault mode only)
+    # jira_roots: [EX-1]           # optional: epics this project's work hangs under; narrows Alfred's reverse scan
     path: ~/src/example-app    # absolute or ~-relative repo path
     default_branch: main
     ticket_prefixes: [EX]      # Jira keys like EX-123 route here

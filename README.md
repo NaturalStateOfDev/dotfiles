@@ -54,11 +54,15 @@ employer-specific values — ever. Machine-local config belongs in
 ## Claude Code agent team
 
 `dot_claude/agents/` holds a coordinator (`alfred`) and specialists
-(`ticket-implementer`, `task-documenter`, `staff-reviewer`, `deploy-checker`,
-`pr-janitor`, `staff-auditor`). Invoke with `/alfred <task>` (or `/staff <task>`), `/alfred review`,
-or `/alfred status`. Each project Alfred works on gets a local ledger at `~/.claude/staff/<slug>/ledger.md`, never committed to the repo.
+(`ticket-implementer`, `pre-pr-simplifier`, `staff-reviewer`, `deploy-checker`,
+`task-documenter`, `pr-janitor`, `staff-auditor`). Invoke with `/alfred <task>`
+(or `/staff <task>`), `/alfred review`, `/alfred status`, or `/alfred cleanup <PR>`.
+The pipeline, model routing, ticket rules and layering are in
+[`docs/agent-team.md`](docs/agent-team.md).
 
-Per-machine project registry: copy `~/.claude/staff/projects.example.yaml`
-to `~/.claude/staff/projects.yaml` (ignored by chezmoi) and fill in paths.
+Everything specific stays off this repo:
+- **Local overlays:** `~/.claude/local/<agent>.md` (ignored by chezmoi). Each synced agent reads its overlay, if present, for names, repos, accounts and ports.
+- **Staff records:** `~/.claude/staff/<slug>/` holds the ledger, task records and reviews, never committed.
+- **Project registry:** copy `~/.claude/staff/projects.example.yaml` to `~/.claude/staff/projects.yaml` (ignored by chezmoi) and fill in paths.
 
 Lint agent files before committing: `scripts/check-agents.sh`.

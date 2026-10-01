@@ -59,7 +59,7 @@
       }
     ]
   },
-  "model": "claude-fable-5[1m]",
+  "model": "opus[1m]",
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
   "tui": "fullscreen"

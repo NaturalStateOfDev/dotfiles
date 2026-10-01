@@ -16,8 +16,12 @@ This is a chezmoi source directory, synced to a PUBLIC GitHub repo.
 - PUBLIC repo: no secrets, no personal information, no employer-specific
   values in any file. Per-machine values go in template data
   (`.chezmoi.toml.tmpl` prompts) or stay in unmanaged `~/.zshrc.local`.
-- `README.md` and `CLAUDE.md` are listed in `.chezmoiignore` — keep it that
-  way so they never land in `$HOME`.
+- `README.md`, `CLAUDE.md` and `docs/` are listed in `.chezmoiignore`; keep it that
+  way so they never land in `$HOME`. Design notes go in `docs/` (see
+  `docs/agent-team.md`).
+- Agent files stay generic. Specifics go in the unsynced overlay
+  `~/.claude/local/<agent>.md`, which every agent reads. Never write specifics
+  into a synced file to scrub them later.
 - Windows machines skip zsh-related files via `.chezmoiignore` conditionals;
   every new file needs a deliberate Windows decision.
 

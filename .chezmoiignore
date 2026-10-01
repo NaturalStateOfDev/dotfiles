@@ -23,3 +23,7 @@ scripts/**
 .config/wezterm
 .config/wezterm/**
 {{ end -}}
+
+# Machine-/employer-specific agent overlays (~/.claude/local/<agent>.md) — never synced.
+.claude/local
+.claude/local/**

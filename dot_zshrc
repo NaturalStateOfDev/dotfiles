@@ -158,6 +158,12 @@ fi
 # starship prompt — must run after oh-my-zsh.sh and any prompt-touching tools
 eval "$(starship init zsh)"
 
+# ssh-agent: use the systemd user agent (ssh-agent.service) when it's running
+# and nothing else (desktop session, forwarded agent) already provides one.
+if [[ -z "$SSH_AUTH_SOCK" && -S "$XDG_RUNTIME_DIR/ssh-agent.socket" ]]; then
+  export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+fi
+
 # Machine-local overrides: secrets and work-only config. Never synced —
 # sourced last so it can override anything above.
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"

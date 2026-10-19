@@ -1,5 +1,5 @@
 {
-  "model": "claude-fable-5[1m]",
+  "model": "opus",
   "hooks": {
     "PostToolUse": [
       {
@@ -62,8 +62,12 @@
   },
   "effortLevel": "high",
   "tui": "fullscreen",
+  "env": {
+    "GIT_SSH_COMMAND": "ssh -o BatchMode=yes"
+  },
   "skipWorkflowUsageWarning": true,
   "theme": "dark",
+  "agentPushNotifEnabled": true,
   "autoMode": {
     "environment": [
       "### Org-wide",
@@ -91,6 +95,5 @@
       "**Org-specific CLiles**: None configured",
       "**Org-specific CLIs**: nix / nixos-rebuild / chezmoi (personal machine tooling, not org-specific)"
     ]
-  },
-  "agentPushNotifEnabled": true
+  }
 }
